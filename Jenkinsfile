@@ -23,7 +23,10 @@ pipeline {
 
         stage('Functional') {
           steps {
-            sh 'dotnet test tests/FunctionalTests'
+            warnError(message: 'Functional problem') {
+              sh 'dotnet test tests/FunctionalTests'
+            }
+
           }
         }
 
@@ -33,6 +36,10 @@ pipeline {
     stage('Deployment') {
       steps {
         sh 'dotnet publish eShopOnWeb.sln -o /Users/vincenlebras/Documents/_perso/diginamic_alternance/20_jenkins/cible_jenkins'
+        dir(path: '/Users/vincenlebras/Documents/_perso/diginamic_alternance/20_jenkins/cible_jenkins') {
+          archiveArtifacts(artifacts: '*', onlyIfSuccessful: true)
+        }
+
       }
     }
 
